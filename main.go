@@ -61,13 +61,13 @@ type Options struct {
 	AcceptedMimeTypes map[string]bool
 
 	// tell at what time the thumbnail needs to be created from in seconds
-	frameDuration int
+	FrameDuration int
 
 	// use the middle frame to calculate the thumbnail
-	useMiddleFrame bool
+	UseMiddleFrame bool
 
 	// autogenerate frame based on histogram of different frames
-	autogenFrame bool
+	AutogenFrame bool
 }
 
 // Process generates a thumbnail from a file of unknown type and performs some
