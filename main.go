@@ -59,6 +59,15 @@ type Options struct {
 	// "application/x-cbt", you must accept the corresponding archive type
 	// such as "application/zip" or leave this nil.
 	AcceptedMimeTypes map[string]bool
+
+	// tell at what time the thumbnail needs to be created from in seconds
+	frameDuration int
+
+	// use the middle frame to calculate the thumbnail
+	useMiddleFrame bool
+
+	// autogenerate frame based on histogram of different frames
+	autogenFrame bool
 }
 
 // Process generates a thumbnail from a file of unknown type and performs some
@@ -66,12 +75,12 @@ type Options struct {
 func Process(rs io.ReadSeeker, opts Options) (
 	src Source, thumb image.Image, err error,
 ) {
-	if opts.ThumbDims.Width == 0 {
-		opts.ThumbDims.Width = 150
-	}
-	if opts.ThumbDims.Height == 0 {
-		opts.ThumbDims.Height = 150
-	}
+	//if opts.ThumbDims.Width == 0 {
+	//	opts.ThumbDims.Width = 150
+	//}
+	//if opts.ThumbDims.Height == 0 {
+	//	opts.ThumbDims.Height = 150
+	//}
 
 	src.Mime, src.Extension, err = DetectMIME(rs, opts.AcceptedMimeTypes)
 	if err != nil {
