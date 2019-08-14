@@ -15,7 +15,7 @@
 
 #define HIST_SIZE 256
 #define HIST_CHANNELS 3
-#define MAX_FRAMES 10
+#define MAX_FRAMES 100
 
 // Compute sum-square deviation to estimate "closeness"
 static double compute_error(const unsigned hist[HIST_SIZE][HIST_CHANNELS],
@@ -32,10 +32,14 @@ static double compute_error(const unsigned hist[HIST_SIZE][HIST_CHANNELS],
 }
 
 // Select best frame based on RGB histograms
-static AVFrame* select_best_frame(AVFrame* frames[], int size)
+static AVFrame* select_best_frame(AVFrame* frames[], int size, useMiddleframe bool)
 {
     if (size == 1) {
         return frames[0];
+    }
+
+    if (useMiddleframe == true) {
+      return frames[size/2]
     }
 
     // RGB color distribution histograms of the frames
@@ -270,7 +274,7 @@ end:
 }
 
 int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
-    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims)
+    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims, useMiddleframe bool)
 {
     int err = 0;
     int size = 0;
@@ -278,7 +282,7 @@ int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
     AVFrame* frames[MAX_FRAMES] = { NULL };
     AVFrame* next = NULL;
 
-    // Read up to 10 frames in 10 frame intervals
+    // Read up to 100 frames in 10 frame intervals
     while (1) {
         next = av_frame_alloc();
         err = read_frame(avfc, avcc, next, stream);
@@ -301,7 +305,7 @@ int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
 end:
     if (size) {
         // Ignore all read errors, if at least one frame read
-        err = encode_frame(img, select_best_frame(frames, size), thumb_dims);
+        err = encode_frame(img, select_best_frame(frames, size, useMiddleframe), thumb_dims);
     }
 
     for (int i = 0; i < size; i++) {

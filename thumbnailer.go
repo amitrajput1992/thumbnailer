@@ -15,7 +15,7 @@ func init() {
 
 // Thumbnail generates a thumbnail from a representative frame of the media.
 // Images count as one frame media.
-func (c *FFContext) Thumbnail(dims Dims) (thumb image.Image, err error) {
+func (c *FFContext) Thumbnail(dims Dims, fd int, mf bool) (thumb image.Image, err error) {
 	ci, err := c.codecContext(FFVideo)
 	if err != nil {
 		return
@@ -31,7 +31,7 @@ func (c *FFContext) Thumbnail(dims Dims) (thumb image.Image, err error) {
 		C.struct_Dims{
 			width:  C.ulong(dims.Width),
 			height: C.ulong(dims.Height),
-		})
+		}, mf)
 	switch {
 	case ret != 0:
 		err = ffError(ret)
@@ -105,7 +105,7 @@ func processMedia(rs io.ReadSeeker, src *Source, opts Options,
 			return
 		}
 
-		thumb, err = c.Thumbnail(opts.ThumbDims)
+		thumb, err = c.Thumbnail(opts.ThumbDims, opts.FrameDuration, opts.UseMiddleFrame)
 	} else {
 		err = ErrCantThumbnail
 	}
