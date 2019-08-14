@@ -81,22 +81,6 @@ func processMedia(rs io.ReadSeeker, src *Source, opts Options,
 		}
 	}
 
-	// always take full width from the source unless specified externally via options, otherwise fallback to default values of 150x150
-	if opts.ThumbDims.Width == 0 {
-	  if src.Dims.Width != 0 {
-      opts.ThumbDims.Width = src.Dims.Width
-    } else {
-      opts.ThumbDims.Width = 150
-    }
-	}
-	if opts.ThumbDims.Height == 0 {
-    if src.Dims.Height != 0 {
-      opts.ThumbDims.Height = src.Dims.Height
-    } else {
-      opts.ThumbDims.Height = 150
-    }
-	}
-
 	if c.HasCoverArt() {
 		thumb, err = processCoverArt(c.CoverArt(), opts)
 		switch err {

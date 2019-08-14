@@ -75,12 +75,12 @@ type Options struct {
 func Process(rs io.ReadSeeker, opts Options) (
 	src Source, thumb image.Image, err error,
 ) {
-	//if opts.ThumbDims.Width == 0 {
-	//	opts.ThumbDims.Width = 150
-	//}
-	//if opts.ThumbDims.Height == 0 {
-	//	opts.ThumbDims.Height = 150
-	//}
+	if opts.ThumbDims.Width == 0 {
+		opts.ThumbDims.Width = 150
+	}
+	if opts.ThumbDims.Height == 0 {
+		opts.ThumbDims.Height = 150
+	}
 
 	src.Mime, src.Extension, err = DetectMIME(rs, opts.AcceptedMimeTypes)
 	if err != nil {
