@@ -1,5 +1,6 @@
 #pragma once
 #include "ffmpeg.h"
+#include <stdbool.h>
 
 struct Buffer {
     uint8_t* data;
@@ -13,4 +14,4 @@ struct Dims {
 
 // Writes RGBA thumbnail buffer to img
 int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
-    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims);
+    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims, const bool useMiddleframe);

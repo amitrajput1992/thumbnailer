@@ -21,6 +21,7 @@ func (c *FFContext) Thumbnail(dims Dims, fd int, mf bool) (thumb image.Image, er
 		return
 	}
 
+	var mff = C.bool(mf)
 	var img C.struct_Buffer
 	defer func() {
 		if img.data != nil {
@@ -31,7 +32,7 @@ func (c *FFContext) Thumbnail(dims Dims, fd int, mf bool) (thumb image.Image, er
 		C.struct_Dims{
 			width:  C.ulong(dims.Width),
 			height: C.ulong(dims.Height),
-		}, mf)
+		}, mff)
 	switch {
 	case ret != 0:
 		err = ffError(ret)
@@ -104,7 +105,6 @@ func processMedia(rs io.ReadSeeker, src *Source, opts Options,
 			err = ErrTooTall
 			return
 		}
-
 		thumb, err = c.Thumbnail(opts.ThumbDims, opts.FrameDuration, opts.UseMiddleFrame)
 	} else {
 		err = ErrCantThumbnail

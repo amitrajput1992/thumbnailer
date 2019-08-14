@@ -2,7 +2,7 @@
 #include <float.h>
 #include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
-
+#include <stdbool.h>
 /**
  * Potential thumbnail lookup filter to reduce the risk of an inappropriate
  * selection (such as a black frame) we could get with an absolute seek.
@@ -32,14 +32,14 @@ static double compute_error(const unsigned hist[HIST_SIZE][HIST_CHANNELS],
 }
 
 // Select best frame based on RGB histograms
-static AVFrame* select_best_frame(AVFrame* frames[], int size, useMiddleframe bool)
+static AVFrame* select_best_frame(AVFrame* frames[], int size, const bool useMiddleframe)
 {
     if (size == 1) {
         return frames[0];
     }
 
-    if (useMiddleframe == true) {
-      return frames[size/2]
+    if (useMiddleframe) {
+      return frames[size/2];
     }
 
     // RGB color distribution histograms of the frames
@@ -274,13 +274,14 @@ end:
 }
 
 int generate_thumbnail(struct Buffer* img, AVFormatContext* avfc,
-    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims, useMiddleframe bool)
+    AVCodecContext* avcc, const int stream, const struct Dims thumb_dims, const bool useMiddleframe)
 {
     int err = 0;
     int size = 0;
     int i = 0;
     AVFrame* frames[MAX_FRAMES] = { NULL };
     AVFrame* next = NULL;
+    int mf = useMiddleframe;
 
     // Read up to 100 frames in 10 frame intervals
     while (1) {
