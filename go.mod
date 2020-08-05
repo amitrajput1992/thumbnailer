@@ -1,3 +1,5 @@
 module github.com/bakape/thumbnailer/v2
 
-require github.com/nwaples/rardecode v1.0.0
+go 1.13
+
+require github.com/nwaples/rardecode v1.1.0

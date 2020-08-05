@@ -26,3 +26,16 @@ cross_tests_windows:
 	PKG_CONFIG_PATH=$(MXE_ROOT)/$(MXE_TARGET)/lib/pkgconfig \
 	go test -a -c -o test.exe --ldflags '-extldflags "-static"'
 	wine ./test.exe
+
+test:
+	go test --race
+
+test_docker:
+	docker build -t thumbnailer_test .
+	docker run \
+		--mount type=bind,source="$(PWD)"/testdata,target=/app/testdata \
+		--rm thumbnailer_test \
+		make clean test testdata_restore_permissions
+
+testdata_restore_permissions:
+	chown $(shell stat -c "%u:%g" testdata/alpha.webm) testdata/*

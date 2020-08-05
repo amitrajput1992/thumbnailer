@@ -19,6 +19,7 @@ var samples = [...]string{
 	"no_cover.ogg",
 	"no_sound.mov",
 	"no_sound.webm",
+	"with_sound_vp9.webm",
 	"sample.jpg",
 	"with_cover.mp3",
 	"with_sound.mkv",
@@ -38,13 +39,23 @@ var samples = [...]string{
 	"odd_dimensions.webm", // Unconventional dims for a YUV stream
 	"alpha.webm",
 	"start_black.webm", // Check the histogram thumbnailing
-	"exif_orientation.jpg",
 	"rare_brand.mp4",
 	"invalid_data.jpg", // Check handling images with some invalid data
 	"sample.zip",
 	"sample.rar",
 	"too small.png",
 	"exact_thumb_size.jpg",
+	"meta_segfault.mp4",
+
+	// Exif rotation compensation
+	"jannu_baseline.jpg",
+	"jannu_h_mirrored.jpg",
+	"jannu_180.jpg",
+	"jannu_v_mirrored.jpg",
+	"jannu_270_h_mirrored.jpg",
+	"jannu_90.jpg",
+	"jannu_90_h_mirrored.jpg",
+	"jannu_270.jpg",
 }
 
 var ignore = map[string]bool{
@@ -150,4 +161,24 @@ func TestSourceAlreadyThumbSize(t *testing.T) {
 	if dims.Y != 150 {
 		t.Errorf("unexpected height: 150: %d", dims.Y)
 	}
+}
+
+func TestUnprocessedLine(t *testing.T) {
+	t.Parallel()
+
+	const sample = "jannu_180.jpg"
+	f := openSample(t, sample)
+	defer f.Close()
+
+	_, thumb, err := Process(f, Options{
+		ThumbDims: Dims{
+			Width:  300,
+			Height: 300,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	name := fmt.Sprintf(`%s_to_300x300_thumb.png`, sample)
+	writeSample(t, name, thumb)
 }

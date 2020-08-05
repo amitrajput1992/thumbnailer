@@ -30,12 +30,12 @@ func (c *FFContext) Thumbnail(dims Dims, fd int, mf bool) (thumb image.Image, er
 	}()
 	ret := C.generate_thumbnail(&img, c.avFormatCtx, ci.ctx, ci.stream,
 		C.struct_Dims{
-			width:  C.ulong(dims.Width),
-			height: C.ulong(dims.Height),
+			width:  C.uint32_t(dims.Width),
+			height: C.uint32_t(dims.Height),
 		}, mff)
 	switch {
 	case ret != 0:
-		err = ffError(ret)
+		err = castError(ret)
 	case img.data == nil:
 		err = ErrGetFrame
 	default:
@@ -62,8 +62,6 @@ func processMedia(rs io.ReadSeeker, src *Source, opts Options,
 		return
 	}
 	defer c.Close()
-
-	// TODO: EXIF orientation
 
 	src.Length = c.Length()
 	src.Meta = c.Meta()
